@@ -8,6 +8,34 @@ function love.load()
     screen.w = love.graphics.getWidth()
     screen.h = love.graphics.getHeight()
 
+    -- Use a function to create the ball
+    CreateBall()
+
+    changecolor = 300
+end
+
+function love.update(dt)
+    UpdateBall()
+    
+    UpdateColour()
+end
+
+function love.draw()
+    ball.DrawBall()
+end
+
+function SetRandomColour ()
+    -- make sure we have a new random seed
+    math.randomseed(os.time())
+    -- pick a random red, green, blue
+    r = math.floor(math.random(0, 255))
+    g = math.floor(math.random(0, 255))
+    b = math.floor(math.random(0, 255))
+    -- set the colour
+    love.graphics.setColor (love.math.colorFromBytes(r, g, b))
+end
+
+function CreateBall()
     -- Determine a random x and y co-ordinate
     local randX = math.random(12, screen.w-12)
     local randY = math.random(12, screen.h-12)
@@ -20,10 +48,13 @@ function love.load()
     ball.dx = 2.0
     ball.dy = 2.0
 
-    changecolor = 300
-end
+    -- as thid function is small, create it here as part of the ball object
+    function ball.DrawBall()
+        love.graphics.circle("fill", ball.x, ball.y, ball.radius)
+    end
+end    
 
-function love.update(dt)
+function UpdateBall()
     -- increment ball position
     ball.x = ball.x + ball.dx
     ball.y = ball.y + ball.dy
@@ -39,7 +70,10 @@ function love.update(dt)
     if ball.y < ball.radius or ball.y > screen.h - ball.radius then
         ball.dy = ball.dy * -1
     end
-    
+end
+
+
+function UpdateColour()
     -- Changes the colour every random interval
     changecolor = changecolor - 1
     if (changecolor <= 0) then
@@ -47,19 +81,4 @@ function love.update(dt)
         changecolor = math.random(50, 750)
         SetRandomColour()
     end
-end
-
-function love.draw()
-    love.graphics.circle("fill", ball.x, ball.y, ball.radius)
-end
-
-function SetRandomColour ()
-    -- make sure we have a new random seed
-    math.randomseed(os.time())
-    -- pick a random red, green, blue
-    r = math.floor(math.random(0, 255))
-    g = math.floor(math.random(0, 255))
-    b = math.floor(math.random(0, 255))
-    -- set the colour
-    love.graphics.setColor (love.math.colorFromBytes(r, g, b))
-end
+end    
